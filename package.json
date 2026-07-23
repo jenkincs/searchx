@@ -1,0 +1,102 @@
+{
+  "name": "searchx",
+  "displayName": "SearchX",
+  "description": "Fast project file search for large VS Code workspaces.",
+  "version": "0.0.1",
+  "publisher": "searchx",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:searchx.open",
+    "onCommand:searchx.rebuild",
+    "onCommand:searchx.status"
+  ],
+  "main": "./out/extension.js",
+  "files": [
+    "out/extension.js",
+    "out/extension.js.map",
+    "out/indexStore.js",
+    "out/indexStore.js.map",
+    "out/pathFilters.js",
+    "out/pathFilters.js.map",
+    "out/searchEngine.js",
+    "out/searchEngine.js.map",
+    "out/searchWorker.js",
+    "out/searchWorker.js.map",
+    "package.json",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "searchx.open",
+        "title": "SearchX: Open File"
+      },
+      {
+        "command": "searchx.rebuild",
+        "title": "SearchX: Rebuild Index"
+      },
+      {
+        "command": "searchx.status",
+        "title": "SearchX: Show Index Status"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "searchx.open",
+        "key": "ctrl+alt+o",
+        "mac": "cmd+alt+o"
+      }
+    ],
+    "configuration": {
+      "title": "SearchX",
+      "properties": {
+        "searchx.exclude": {
+          "type": "array",
+          "default": [
+            "**/.git/**",
+            "**/node_modules/**",
+            "**/dist/**",
+            "**/out/**"
+          ],
+          "description": "Glob patterns excluded from the file index."
+        },
+        "searchx.maxResults": {
+          "type": "number",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 1000
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "format": "prettier --write .github/workflows/ci.yml README.md CHANGELOG.md RELEASE.md package.json tsconfig.json src test/searchx-multi.code-workspace",
+    "format:check": "prettier --check .github/workflows/ci.yml README.md CHANGELOG.md RELEASE.md package.json tsconfig.json src test/searchx-multi.code-workspace",
+    "watch": "tsc -watch -p ./",
+    "test": "npm run compile && node --test out/searchEngine.test.js out/searchWorker.test.js out/pathFilters.test.js",
+    "test:integration": "npm run compile && node out/integrationRunner.js",
+    "test:multi": "npm run compile && SEARCHX_TEST_WORKSPACE=test/searchx-multi.code-workspace node out/integrationRunner.js",
+    "test:vsix": "npm run package && SEARCHX_EXTENSION_PATH=.vscode-test/installed-extensions/searchx.searchx-0.0.1 node out/integrationRunner.js",
+    "benchmark": "npm run compile && node out/benchmark.js",
+    "package": "npm run compile && npx --no-install vsce package --no-dependencies --allow-missing-repository"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/test-electron": "^3.0.0",
+    "@vscode/vsce": "^3.9.2",
+    "mocha": "^10.8.0",
+    "prettier": "^3.9.6",
+    "typescript": "^5.4.0"
+  }
+}
